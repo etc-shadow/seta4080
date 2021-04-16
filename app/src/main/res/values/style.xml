@@ -1,0 +1,5 @@
+<resources>
+    <style name="buttonStyle" parent="android:Widget.Button">
+        <item name="android:backgroundTint">@color/text_colors</item>
+    </style>
+</resources>

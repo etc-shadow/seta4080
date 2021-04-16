@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SETA4080</string>
+    <string name="SETA_LOCAL_USER" />
+    <string name="SETA_USERNAME" />
+</resources>
