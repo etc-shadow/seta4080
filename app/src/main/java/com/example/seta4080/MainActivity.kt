@@ -1,24 +1,17 @@
 package com.example.seta4080
 
 import android.app.Activity
-import android.app.AlertDialog
-import android.app.PendingIntent.getActivity
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.drawable.AnimationDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import java.io.File
 import kotlin.math.max
-import kotlin.math.min
 
 class MainActivity : AppCompatActivity() {
     /* Initialize class variables*/
@@ -30,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     val SETA_MC_REQUEST_CODE = 101
     val SETA_TEXT_REQUEST_CODE = 102
     val SETA_MODULE_REQUEST_CODE = 300
+    val SETA_FINISH_SCREEN_REQUEST_CODE = 500
     // List of relevant activities
     var concepts: Array<String>? = null
     // Database Connection Object
@@ -43,11 +37,13 @@ class MainActivity : AppCompatActivity() {
         DB_CONNECTION.copyDbToDevice(this)
     }
 
-    fun findLearningPath(){
+    /* Called by the start button on the main page, this function has us display the modules menu*/
+    fun userSelectLearningPath(){
         val intent = Intent(this, SelectModule::class.java)
         startActivityForResult(intent, SETA_MODULE_REQUEST_CODE)
     }
 
+    /* Called to activate background dynamic gradient - it's a fun UI to keep eyes on the screen*/
     fun animateBackground(){
         val container = findViewById<ConstraintLayout>(R.id.activity_layout)
         val backgroundFlow = container.background as AnimationDrawable
@@ -56,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         backgroundFlow.start()
     }
 
+    /* Pull learning path (called after user selects a module) and update it as variable for this session. We will track our progress on the array*/
     fun initLearningPath(learningPathType:String){
         when (learningPathType){
             "networks_path" -> {
@@ -67,6 +64,7 @@ class MainActivity : AppCompatActivity() {
         displayScreen(questionIndex)
     }
 
+    /* Examine the current learning path and look for all quizzes*/
     fun checkMaxPointsPossible(){
         var numOfQuizzes = 0
         concepts?.forEach { i ->
@@ -77,27 +75,34 @@ class MainActivity : AppCompatActivity() {
         pointsPossible = numOfQuizzes
     }
 
+    /* Home screen setup*/
     fun setupMainScreen(){
         setContentView(R.layout.activity_main)
         animateBackground()
+        // Grab local username file
         val usernameFileExists = File(this.filesDir, "seta_username_file").exists()
         var username = ""
         if (usernameFileExists) {
             username = this.openFileInput("seta_username_file").bufferedReader().readText()
         }
+        // We don't have a record of this user, display standard message and wait for them to provide name
         if (username.isNullOrBlank()){
-            findViewById<TextView>(R.id.mainTextView).text = "Welcome to the Security Education Training and Awareness App"
+            findViewById<TextView>(R.id.mainTextView).text = "Welcome to the Security Education Training and Awareness App\n(SETA)"
         } else {
+            // Otherwise, user has visited the app before and we welcome them back
             findViewById<TextView>(R.id.UserNamePrompt).text = username
             findViewById<TextView>(R.id.UserNamePrompt).visibility = View.GONE
             findViewById<TextView>(R.id.mainTextView).text = "Welcome back to SETA, $username"
         }
     }
 
+    /* Standard start procedure (update username, prompt user for learning path*/
     fun startAppFlow(view: View){
-        findLearningPath()
+        updateUsername()
+        userSelectLearningPath()
     }
 
+    /* Write username to local storage file*/
     fun updateUsername(){
         val inputUserName = findViewById<TextView>(R.id.UserNamePrompt).text.toString()
         this.openFileOutput("seta_username_file", Context.MODE_PRIVATE).use {
@@ -149,26 +154,28 @@ class MainActivity : AppCompatActivity() {
         // Otherwise if it's our module selection page returning
         } else if (resultCode == Activity.RESULT_OK && requestCode == SETA_MODULE_REQUEST_CODE) {
             initLearningPath(data?.getStringExtra("EXTRA_LEARNING_PATH").toString())
+        // Otherwise if our finish screen returning
+        } else if (resultCode == Activity.RESULT_OK && requestCode == SETA_FINISH_SCREEN_REQUEST_CODE) {
+            // Reset values before returning to main
+            points = 0
+            pointsPossible = 0
+            questionIndex = 0
+            userSelectLearningPath()
         }
     }
 
-    /* Single function to proceed to the next relevant screen. Uses the class var "questionIndex" to track where in the array of module activities we are/should be
-    *
-    */
+    /* Single function to proceed to the next relevant screen. Uses the class var "questionIndex" to track where in the array of module activities we are/should be*/
     fun displayScreen(index: Int) {
         if (index >= concepts?.size!!){
             // Index exceeded array, module complete
-            if (pointsPossible == 0){
+
+            /*if (pointsPossible == 0){
                 Toast.makeText(this,"Great work! You've completed this module.", Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(this, "You got $points out of $pointsPossible", Toast.LENGTH_LONG).show()
-            }
-
-            // Reset values before returning
-            points=0
-            pointsPossible=0
-            questionIndex=0
-            setupMainScreen()
+            }*/
+            // Index exceeded array, module complete
+            displayFinishScreen()
         } else {
             val current = concepts?.get(index).toString()
             val currentType = current?.split("-")?.get(0)
@@ -191,6 +198,14 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    fun displayFinishScreen(){
+        val intent = Intent(this, FinishScreen::class.java).apply {
+            putExtra("EXTRA_USER_SCORE", points)
+            putExtra("EXTRA_HIGHEST_POSSIBLE_SCORE", pointsPossible)
+        }
+        startActivityForResult(intent, SETA_FINISH_SCREEN_REQUEST_CODE)
     }
 
     fun updateMCwithImage(title: String, question: String, imgLink: String, options: List<String>){
