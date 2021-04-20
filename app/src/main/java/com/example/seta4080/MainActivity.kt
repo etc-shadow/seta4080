@@ -200,6 +200,14 @@ class MainActivity : AppCompatActivity() {
                     val text_info = entryData["textInfo"].toString()
                     updateTextBox(text_title, text_info)
                 }
+            } else if (currentType.equals("textImage")){
+                if (currentEntryRow != null) {
+                    val entryData = DB_CONNECTION.readDB("textInfo", currentEntryRow)
+                    val text_title = entryData["title"].toString()
+                    val text_info = entryData["textInfo"].toString()
+                    val image_name = "text_image_"+currentEntryRow
+                    updateTextWithImage(text_title, text_info, image_name)
+                }
             } else if (currentType.equals("video")) {
                 if (currentEntryRow!= null) {
                     val entryData = DB_CONNECTION.readDB("video", currentEntryRow)
@@ -236,6 +244,16 @@ class MainActivity : AppCompatActivity() {
         // Call intent
         val intent = Intent(this, TextInfo::class.java).apply{ putExtra("EXTRA_TEXT_TITLE", title)
             putExtra("EXTRA_TEXT_INFO", text)}
+        startActivityForResult(intent, SETA_TEXT_REQUEST_CODE)
+    }
+
+    fun updateTextWithImage(title: String, text: String, imageName: String){
+        // Call intent
+        val intent = Intent(this, ImageTextActivity::class.java).apply {
+            putExtra("EXTRA_IMAGE_TEXT_TITLE", title)
+            putExtra("EXTRA_IMAGE_TEXT_INFO", text)
+            putExtra("EXTRA_IMAGE_TEXT_IMAGE", imageName)
+        }
         startActivityForResult(intent, SETA_TEXT_REQUEST_CODE)
     }
 }
