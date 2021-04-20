@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SETA4080">
-        <activity android:name=".ImageTextActivity"></activity>
+        <activity android:name=".ImageMCQuiz"></activity>
+        <activity android:name=".ImageTextActivity" />
         <activity
             android:name=".VideoPlayback"
             android:label="@string/title_activity_video_playback"

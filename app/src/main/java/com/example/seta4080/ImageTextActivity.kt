@@ -24,8 +24,6 @@ class ImageTextActivity : AppCompatActivity() {
         // Update display image
         val imageId = "com.example.seta4080:drawable/"+intent.getStringExtra("EXTRA_IMAGE_TEXT_IMAGE")
         val resouceId = this.resources.getIdentifier(imageId, "id", this.packageName)
-        print(imageId)
-        print(resouceId)
         findViewById<ImageView>(R.id.textImageView).setImageDrawable(ContextCompat.getDrawable(this, resouceId))
     }
 

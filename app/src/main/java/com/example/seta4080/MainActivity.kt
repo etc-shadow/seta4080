@@ -117,7 +117,20 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, MCQuiz::class.java).apply{ putExtra("EXTRA_MC_TITLE", title)
             putExtra("EXTRA_MC_QUESTION", question)
             putExtra("EXTRA_MC_OPTIONS", options)
-            putExtra("EXTRA_MC_ANSWER", solution)}
+            putExtra("EXTRA_MC_ANSWER", solution)
+        }
+        startActivityForResult(intent, SETA_MC_REQUEST_CODE)
+    }
+
+    /* Update multiple choice quiz screen with image and information*/
+    fun updateMCQuestionsImage(title:String, question: String, options: Array<String>, solution: String, imageName: String) {
+        // Call intent
+        val intent = Intent(this, ImageMCQuiz::class.java).apply{ putExtra("EXTRA_MC_TITLE", title)
+            putExtra("EXTRA_MC_QUESTION", question)
+            putExtra("EXTRA_MC_OPTIONS", options)
+            putExtra("EXTRA_MC_ANSWER", solution)
+            putExtra("EXTRA_MC_IMAGE", imageName)
+        }
         startActivityForResult(intent, SETA_MC_REQUEST_CODE)
     }
 
@@ -192,6 +205,16 @@ class MainActivity : AppCompatActivity() {
                     val mc_options = entryData["options"].toString().split(";").toTypedArray()
                     val mc_solution = entryData["solution"].toString()
                     updateMCQuestions(mc_title, mc_question, mc_options, mc_solution)
+                }
+            } else if (currentType.equals("imageQuiz")) {
+                if (currentEntryRow != null) {
+                    val entryData = DB_CONNECTION.readDB("quiz", currentEntryRow)
+                    val mc_title = entryData["title"].toString()
+                    val mc_question = entryData["question"].toString()
+                    val mc_options = entryData["options"].toString().split(";").toTypedArray()
+                    val mc_solution = entryData["solution"].toString()
+                    val image_name = "quiz_image_"+currentEntryRow
+                    updateMCQuestionsImage(mc_title, mc_question, mc_options, mc_solution, image_name)
                 }
             } else if (currentType.equals("textInfo")) {
                 if (currentEntryRow != null) {

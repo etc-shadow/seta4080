@@ -24,7 +24,7 @@ class VideoPlayback : AppCompatActivity() {
             settings.javaScriptEnabled = true
             webChromeClient = WebChromeClient()
         }
-        findViewById<TextView>(R.id.videoTextView).text = "We're about to launch a YouTube video! Press play to watch \"" + YT_VIDEO_TITLE + "\"\nAfterwards, simply press the back button to return to this page"
+        findViewById<TextView>(R.id.videoTextView).text = "We're about to launch a YouTube video! Press play to watch \"" + YT_VIDEO_TITLE + "\"\nAfterwards, simply double tap the back button to return to this page"
     }
 
     /* Called by the next button, returns a successful message to caller with which button called*/
