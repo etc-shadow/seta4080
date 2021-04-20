@@ -16,7 +16,8 @@ class DBTools(context: Context) : SQLiteOpenHelper(context, "seta4080.db", null,
     val dbPath = context.getDatabasePath("$APP_DATA_LOCATION/databases/seta4080.db").absolutePath
     val tablesDirectory = mapOf<String, String>(
         "textInfo" to "text_modules",
-        "quiz" to "quizzes"
+        "quiz" to "quizzes",
+        "video" to "videos"
     )
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -45,6 +46,10 @@ class DBTools(context: Context) : SQLiteOpenHelper(context, "seta4080.db", null,
                 returned_fields["question"] = result?.getString(result.getColumnIndex("question"))
                 returned_fields["options"] = result?.getString(result.getColumnIndex("options"))
                 returned_fields["solution"] = result?.getString(result.getColumnIndex("solution"))
+            }
+            "videos" -> {
+                returned_fields["title"] = result?.getString(result.getColumnIndex("title"))
+                returned_fields["embed"] = result?.getString(result.getColumnIndex("embed"))
             }
         }
         return returned_fields.toMap()

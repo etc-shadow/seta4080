@@ -6,5 +6,5 @@
         - textInfo, pulling records from the text_modules table
         - quiz, pulling records from the quizzes table
     -->
-    <string name="NETWORKS_EASY">textInfo-1,textInfo-2,textInfo-3,quiz-2,textInfo-4,quiz-1,textInfo-5,textInfo-6,textInfo-7,textInfo-8,quiz-3</string>
+    <string name="NETWORKS_EASY">textInfo-1,video-1,textInfo-2,textInfo-3,quiz-2,textInfo-4,quiz-1,textInfo-5,textInfo-6,textInfo-7,textInfo-8,quiz-3</string>
 </resources>

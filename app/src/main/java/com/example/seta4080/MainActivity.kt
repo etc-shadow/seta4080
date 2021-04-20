@@ -16,12 +16,13 @@ import kotlin.math.max
 class MainActivity : AppCompatActivity() {
     /* Initialize class variables*/
     // Track activity, points
-    var questionIndex = 0 // Tracks where we are in the activities list for this module
+    var activityIndex = 0 // Tracks where we are in the activities list for this module
     var points = 0 // Tracks points accumulated in this module
     var pointsPossible = 0 // Tracks max points possible in this module. Consider tracking incorrect instead and using sum
     // Status codes
     val SETA_MC_REQUEST_CODE = 101
     val SETA_TEXT_REQUEST_CODE = 102
+    val SETA_YT_REQUEST_CODE = 103
     val SETA_MODULE_REQUEST_CODE = 300
     val SETA_FINISH_SCREEN_REQUEST_CODE = 500
     // List of relevant activities
@@ -45,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
     /* Called to activate background dynamic gradient - it's a fun UI to keep eyes on the screen*/
     fun animateBackground(){
-        val container = findViewById<ConstraintLayout>(R.id.activity_layout)
+        val container = findViewById<ConstraintLayout>(R.id.mainLayout)
         val backgroundFlow = container.background as AnimationDrawable
         backgroundFlow.setEnterFadeDuration(2000)
         backgroundFlow.setExitFadeDuration(4000)
@@ -61,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 
         }
         checkMaxPointsPossible()
-        displayScreen(questionIndex)
+        displayScreen(activityIndex)
     }
 
     /* Examine the current learning path and look for all quizzes*/
@@ -120,6 +121,16 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, SETA_MC_REQUEST_CODE)
     }
 
+    /* Update YouTube video screen*/
+    fun updateYouTubeScreen(title: String, embedCode: String) {
+        // Call intent
+        val intent = Intent(this, VideoPlayback::class.java).apply {
+            putExtra("EXTRA_YT_TITLE", title)
+            putExtra("EXTRA_YT_EMBED_CODE", embedCode)
+        }
+        startActivityForResult(intent, SETA_YT_REQUEST_CODE)
+    }
+
     /* Results from activities are returned here. We use different request codes to call different activities (check which activity returned,
     * and that it belonged to our app)
     * We can also check the returned Intent "data" for information the activities pass back
@@ -133,33 +144,33 @@ class MainActivity : AppCompatActivity() {
                 if (data?.getBooleanExtra("MC_USER_CORRECT", false) == true){
                     points++
                 }
-                questionIndex++
-                displayScreen(questionIndex)
+                activityIndex++
+                displayScreen(activityIndex)
             } else if (data?.getStringExtra("BUTTON_STATUS").equals("PREV")) {
                 // If user clicked back, return to previous (at least index 0)
-                questionIndex = max(0, questionIndex-1)
-                displayScreen(questionIndex)
+                activityIndex = max(0, activityIndex-1)
+                displayScreen(activityIndex)
             }
-        // Otherwise if TEXT returns successfully
-        } else if (resultCode == Activity.RESULT_OK && requestCode == SETA_TEXT_REQUEST_CODE) {
+        // Otherwise if TEXT or YouTube return successfully
+        } else if (resultCode == Activity.RESULT_OK && (requestCode == SETA_TEXT_REQUEST_CODE || requestCode == SETA_YT_REQUEST_CODE)) {
             if (data?.getStringExtra("BUTTON_STATUS").equals("NEXT")){
                 // If user clicked next, increment index
-                questionIndex++
-                displayScreen(questionIndex)
+                activityIndex++
+                displayScreen(activityIndex)
             } else if (data?.getStringExtra("MC_BUTTON_STATUS").equals("PREV")) {
                 // If user clicked back, return to previous (at least index 0)
-                questionIndex = max(0, questionIndex-1)
-                displayScreen(questionIndex)
+                activityIndex = max(0, activityIndex-1)
+                displayScreen(activityIndex)
             }
         // Otherwise if it's our module selection page returning
         } else if (resultCode == Activity.RESULT_OK && requestCode == SETA_MODULE_REQUEST_CODE) {
             initLearningPath(data?.getStringExtra("EXTRA_LEARNING_PATH").toString())
-        // Otherwise if our finish screen returning
+        // Otherwise if it's our finish screen returning
         } else if (resultCode == Activity.RESULT_OK && requestCode == SETA_FINISH_SCREEN_REQUEST_CODE) {
             // Reset values before returning to main
             points = 0
             pointsPossible = 0
-            questionIndex = 0
+            activityIndex = 0
             userSelectLearningPath()
         }
     }
@@ -167,13 +178,6 @@ class MainActivity : AppCompatActivity() {
     /* Single function to proceed to the next relevant screen. Uses the class var "questionIndex" to track where in the array of module activities we are/should be*/
     fun displayScreen(index: Int) {
         if (index >= concepts?.size!!){
-            // Index exceeded array, module complete
-
-            /*if (pointsPossible == 0){
-                Toast.makeText(this,"Great work! You've completed this module.", Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(this, "You got $points out of $pointsPossible", Toast.LENGTH_LONG).show()
-            }*/
             // Index exceeded array, module complete
             displayFinishScreen()
         } else {
@@ -195,6 +199,13 @@ class MainActivity : AppCompatActivity() {
                     val text_title = entryData["title"].toString()
                     val text_info = entryData["textInfo"].toString()
                     updateTextBox(text_title, text_info)
+                }
+            } else if (currentType.equals("video")) {
+                if (currentEntryRow!= null) {
+                    val entryData = DB_CONNECTION.readDB("video", currentEntryRow)
+                    val video_title = entryData["title"].toString()
+                    val video_embed_code = entryData["embed"].toString()
+                    updateYouTubeScreen(video_title, video_embed_code)
                 }
             }
         }

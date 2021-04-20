@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.seta4080">
-
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,7 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SETA4080">
-        <activity android:name=".FinishScreen"></activity>
+        <activity
+            android:name=".VideoPlayback"
+            android:label="@string/title_activity_video_playback"
+            android:theme="@style/Theme.SETA4080.NoActionBar"></activity>
+        <activity android:name=".FinishScreen" />
         <activity
             android:name=".TextInfo"
             android:parentActivityName=".SelectModule" />

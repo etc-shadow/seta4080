@@ -35,7 +35,7 @@ class FinishScreen : AppCompatActivity() {
     }
 
     fun animateBackground(){
-        val container = findViewById<ConstraintLayout>(R.id.activity_layout)
+        val container = findViewById<ConstraintLayout>(R.id.mainLayout)
         val backgroundFlow = container.background as AnimationDrawable
         backgroundFlow.setEnterFadeDuration(2000)
         backgroundFlow.setExitFadeDuration(4000)

@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.example.seta4080.MainActivity
 
 class SelectModule : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +25,7 @@ class SelectModule : AppCompatActivity() {
     }
 
     fun animateBackground(){
-        val container = findViewById<ConstraintLayout>(R.id.activity_layout)
+        val container = findViewById<ConstraintLayout>(R.id.mainLayout)
         val backgroundFlow = container.background as AnimationDrawable
         backgroundFlow.setEnterFadeDuration(2000)
         backgroundFlow.setExitFadeDuration(4000)
