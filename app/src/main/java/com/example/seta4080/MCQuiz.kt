@@ -34,6 +34,7 @@ class MCQuiz : AppCompatActivity() {
         solution = intent.getStringExtra("EXTRA_MC_ANSWER").toString()
     }
 
+    /* Called whenever option selected, updates UI and enables "next" button*/
     fun mcSelected(view: View) {
         val option1 = findViewById<RadioButton>(R.id.mc_option1)
         val option2 = findViewById<RadioButton>(R.id.mc_option2)
@@ -83,6 +84,7 @@ class MCQuiz : AppCompatActivity() {
         }
     }
 
+    /* Called by "next" button, returns information to activity caller and closes activity*/
     fun submitAnswer(view: View) {
         val correctAnswer:Boolean = userAnswer.equals(solution)
         val resultIntent = Intent(applicationContext, MainActivity::class.java).apply {
@@ -93,6 +95,7 @@ class MCQuiz : AppCompatActivity() {
         finish()
     }
 
+    /* Called to activate background dynamic gradient - it's a fun UI to keep eyes on the screen*/
     fun animateBackground(){
         val container = findViewById<ConstraintLayout>(R.id.mainLayout)
         val backgroundFlow = container.background as AnimationDrawable

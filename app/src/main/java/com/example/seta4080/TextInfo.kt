@@ -20,6 +20,7 @@ class TextInfo : AppCompatActivity() {
         findViewById<TextView>(R.id.textInfoBlock).text = intent.getStringExtra("EXTRA_TEXT_INFO")
     }
 
+    /* Called by "next" button, returns information to activity caller and closes activity*/
     fun submitAnswer(view: View) {
         val resultIntent = Intent(applicationContext, MainActivity::class.java).apply {
             putExtra("BUTTON_STATUS", "NEXT")
@@ -28,6 +29,7 @@ class TextInfo : AppCompatActivity() {
         finish()
     }
 
+    /* Called to activate background dynamic gradient - it's a fun UI to keep eyes on the screen*/
     fun animateBackground(){
         val container = findViewById<ConstraintLayout>(R.id.mainLayout)
         val backgroundFlow = container.background as AnimationDrawable

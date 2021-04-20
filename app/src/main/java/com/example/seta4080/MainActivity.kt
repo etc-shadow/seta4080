@@ -14,11 +14,11 @@ import java.io.File
 import kotlin.math.max
 
 class MainActivity : AppCompatActivity() {
-    /* Initialize class variables*/
+    // *************************Initialize class variables here*************************************
     // Track activity, points
     var activityIndex = 0 // Tracks where we are in the activities list for this module
     var points = 0 // Tracks points accumulated in this module
-    var pointsPossible = 0 // Tracks max points possible in this module. Consider tracking incorrect instead and using sum
+    var pointsPossible = 0 // Tracks max points possible in this module
     // Status codes
     val SETA_MC_REQUEST_CODE = 101
     val SETA_TEXT_REQUEST_CODE = 102
@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     // Database Connection Object
     lateinit var DB_CONNECTION: DBTools
 
+    // *************************Key Android overrides (creation, activity result) here**************
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -37,115 +38,8 @@ class MainActivity : AppCompatActivity() {
         DB_CONNECTION = DBTools(this)
         DB_CONNECTION.copyDbToDevice(this)
     }
-
-    /* Called by the start button on the main page, this function has us display the modules menu*/
-    fun userSelectLearningPath(){
-        val intent = Intent(this, SelectModule::class.java)
-        startActivityForResult(intent, SETA_MODULE_REQUEST_CODE)
-    }
-
-    /* Called to activate background dynamic gradient - it's a fun UI to keep eyes on the screen*/
-    fun animateBackground(){
-        val container = findViewById<ConstraintLayout>(R.id.mainLayout)
-        val backgroundFlow = container.background as AnimationDrawable
-        backgroundFlow.setEnterFadeDuration(2000)
-        backgroundFlow.setExitFadeDuration(4000)
-        backgroundFlow.start()
-    }
-
-    /* Pull learning path (called after user selects a module) and update it as variable for this session. We will track our progress on the array*/
-    fun initLearningPath(learningPathType:String){
-        when (learningPathType){
-            "networks_path" -> {
-                concepts = getString(R.string.NETWORKS_EASY).split(",").toTypedArray()
-            }
-
-        }
-        checkMaxPointsPossible()
-        displayScreen(activityIndex)
-    }
-
-    /* Examine the current learning path and look for all quizzes*/
-    fun checkMaxPointsPossible(){
-        var numOfQuizzes = 0
-        concepts?.forEach { i ->
-            if (i.split("-").get(0).equals("quiz")){
-                numOfQuizzes++
-            }
-        }
-        pointsPossible = numOfQuizzes
-    }
-
-    /* Home screen setup*/
-    fun setupMainScreen(){
-        setContentView(R.layout.activity_main)
-        animateBackground()
-        // Grab local username file
-        val usernameFileExists = File(this.filesDir, "seta_username_file").exists()
-        var username = ""
-        if (usernameFileExists) {
-            username = this.openFileInput("seta_username_file").bufferedReader().readText()
-        }
-        // We don't have a record of this user, display standard message and wait for them to provide name
-        if (username.isNullOrBlank()){
-            findViewById<TextView>(R.id.mainTextView).text = "Welcome to the Security Education Training and Awareness App\n(SETA)"
-        } else {
-            // Otherwise, user has visited the app before and we welcome them back
-            findViewById<TextView>(R.id.UserNamePrompt).text = username
-            findViewById<TextView>(R.id.UserNamePrompt).visibility = View.GONE
-            findViewById<TextView>(R.id.mainTextView).text = "Welcome back to SETA, $username"
-        }
-    }
-
-    /* Standard start procedure (update username, prompt user for learning path*/
-    fun startAppFlow(view: View){
-        updateUsername()
-        userSelectLearningPath()
-    }
-
-    /* Write username to local storage file*/
-    fun updateUsername(){
-        val inputUserName = findViewById<TextView>(R.id.UserNamePrompt).text.toString()
-        this.openFileOutput("seta_username_file", Context.MODE_PRIVATE).use {
-            it.write(inputUserName.toByteArray())
-        }
-    }
-
-    /* Update multiple choice quiz screen with information*/
-    fun updateMCQuestions(title: String, question: String, options: Array<String>, solution: String) {
-        // Call intent
-        val intent = Intent(this, MCQuiz::class.java).apply{ putExtra("EXTRA_MC_TITLE", title)
-            putExtra("EXTRA_MC_QUESTION", question)
-            putExtra("EXTRA_MC_OPTIONS", options)
-            putExtra("EXTRA_MC_ANSWER", solution)
-        }
-        startActivityForResult(intent, SETA_MC_REQUEST_CODE)
-    }
-
-    /* Update multiple choice quiz screen with image and information*/
-    fun updateMCQuestionsImage(title:String, question: String, options: Array<String>, solution: String, imageName: String) {
-        // Call intent
-        val intent = Intent(this, ImageMCQuiz::class.java).apply{ putExtra("EXTRA_MC_TITLE", title)
-            putExtra("EXTRA_MC_QUESTION", question)
-            putExtra("EXTRA_MC_OPTIONS", options)
-            putExtra("EXTRA_MC_ANSWER", solution)
-            putExtra("EXTRA_MC_IMAGE", imageName)
-        }
-        startActivityForResult(intent, SETA_MC_REQUEST_CODE)
-    }
-
-    /* Update YouTube video screen*/
-    fun updateYouTubeScreen(title: String, embedCode: String) {
-        // Call intent
-        val intent = Intent(this, VideoPlayback::class.java).apply {
-            putExtra("EXTRA_YT_TITLE", title)
-            putExtra("EXTRA_YT_EMBED_CODE", embedCode)
-        }
-        startActivityForResult(intent, SETA_YT_REQUEST_CODE)
-    }
-
-    /* Results from activities are returned here. We use different request codes to call different activities (check which activity returned,
-    * and that it belonged to our app)
+    /* Results from activities are returned here. We use different request codes to call different
+    *activities (check which activity returned, and that it belonged to our app)
     * We can also check the returned Intent "data" for information the activities pass back
     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -188,7 +82,56 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /* Single function to proceed to the next relevant screen. Uses the class var "questionIndex" to track where in the array of module activities we are/should be*/
+    // *************************General utility functions here**************************************
+    /* Called by the start button on the main page, this function has us display the modules menu*/
+    fun userSelectLearningPath(){
+        val intent = Intent(this, SelectModule::class.java)
+        startActivityForResult(intent, SETA_MODULE_REQUEST_CODE)
+    }
+    /* Called to activate background dynamic gradient - it's a fun UI to keep eyes on the screen*/
+    fun animateBackground(){
+        val container = findViewById<ConstraintLayout>(R.id.mainLayout)
+        val backgroundFlow = container.background as AnimationDrawable
+        backgroundFlow.setEnterFadeDuration(2000)
+        backgroundFlow.setExitFadeDuration(4000)
+        backgroundFlow.start()
+    }
+    /* Pull learning path (called after user selects a module) and update it as a session variable.
+    * We will track our progress on the array*/
+    fun initLearningPath(learningPathType:String){
+        when (learningPathType){
+            "networks_path" -> {
+                concepts = getString(R.string.NETWORKS_EASY).split(",").toTypedArray()
+            }
+
+        }
+        checkMaxPointsPossible()
+        displayScreen(activityIndex)
+    }
+    /* Examine the current learning path and look for all quizzes*/
+    fun checkMaxPointsPossible(){
+        var numOfQuizzes = 0
+        concepts?.forEach { i ->
+            if (i.split("-").get(0).equals("quiz")){
+                numOfQuizzes++
+            }
+        }
+        pointsPossible = numOfQuizzes
+    }
+    /* Standard start procedure (update username, prompt user for learning path*/
+    fun startAppFlow(view: View){
+        updateUsername()
+        userSelectLearningPath()
+    }
+    /* Write username to local storage file*/
+    fun updateUsername(){
+        val inputUserName = findViewById<TextView>(R.id.UserNamePrompt).text.toString()
+        this.openFileOutput("seta_username_file", Context.MODE_PRIVATE).use {
+            it.write(inputUserName.toByteArray())
+        }
+    }
+    /* Single function to proceed to the next relevant screen.
+    Uses the class var "activityIndex" class variable to track where in the array of module activities we are/should be*/
     fun displayScreen(index: Int) {
         if (index >= concepts?.size!!){
             // Index exceeded array, module complete
@@ -242,34 +185,35 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun displayFinishScreen(){
-        val intent = Intent(this, FinishScreen::class.java).apply {
-            putExtra("EXTRA_USER_SCORE", points)
-            putExtra("EXTRA_HIGHEST_POSSIBLE_SCORE", pointsPossible)
+    // **************************Functions to setup/update possible screens here********************
+    /* Home screen setup*/
+    fun setupMainScreen(){
+        setContentView(R.layout.activity_main)
+        animateBackground()
+        // Grab local username file
+        val usernameFileExists = File(this.filesDir, "seta_username_file").exists()
+        var username = ""
+        if (usernameFileExists) {
+            username = this.openFileInput("seta_username_file").bufferedReader().readText()
         }
-        startActivityForResult(intent, SETA_FINISH_SCREEN_REQUEST_CODE)
+        // We don't have a record of this user, display standard message and wait for them to provide name
+        if (username.isNullOrBlank()){
+            findViewById<TextView>(R.id.mainTextView).text = "Welcome to the Security Education Training and Awareness App\n(SETA)"
+        } else {
+            // Otherwise, user has visited the app before and we welcome them back
+            findViewById<TextView>(R.id.UserNamePrompt).text = username
+            findViewById<TextView>(R.id.UserNamePrompt).visibility = View.GONE
+            findViewById<TextView>(R.id.mainTextView).text = "Welcome back to SETA, $username"
+        }
     }
-
-    fun updateMCwithImage(title: String, question: String, imgLink: String, options: List<String>){
-        // Update UI
-        //setContentView(R.layout.MCImage)
-        // Update text boxes (question + 4 buttons)
-        findViewById<TextView>(R.id.MCTitle).setText(title)
-        findViewById<TextView>(R.id.MCQuestionBox).setText(question)
-        findViewById<Button>(R.id.mc_option1).setText(options[0])
-        findViewById<Button>(R.id.mc_option2).setText(options[1])
-        findViewById<Button>(R.id.mc_option3).setText(options[2])
-        findViewById<Button>(R.id.mc_option4).setText(options[3])
-        // Update image
-        //TODO: findViewById<Image>(R.id.imageFrame).imageSrc(imgLink???)
-    }
+    /* Updates text information screen*/
     fun updateTextBox(title: String, text: String){
         // Call intent
         val intent = Intent(this, TextInfo::class.java).apply{ putExtra("EXTRA_TEXT_TITLE", title)
             putExtra("EXTRA_TEXT_INFO", text)}
         startActivityForResult(intent, SETA_TEXT_REQUEST_CODE)
     }
-
+    /* Updates text information + image screen*/
     fun updateTextWithImage(title: String, text: String, imageName: String){
         // Call intent
         val intent = Intent(this, ImageTextActivity::class.java).apply {
@@ -278,5 +222,43 @@ class MainActivity : AppCompatActivity() {
             putExtra("EXTRA_IMAGE_TEXT_IMAGE", imageName)
         }
         startActivityForResult(intent, SETA_TEXT_REQUEST_CODE)
+    }
+    /* Update multiple choice quiz screen with information*/
+    fun updateMCQuestions(title: String, question: String, options: Array<String>, solution: String) {
+        // Call intent
+        val intent = Intent(this, MCQuiz::class.java).apply{ putExtra("EXTRA_MC_TITLE", title)
+            putExtra("EXTRA_MC_QUESTION", question)
+            putExtra("EXTRA_MC_OPTIONS", options)
+            putExtra("EXTRA_MC_ANSWER", solution)
+        }
+        startActivityForResult(intent, SETA_MC_REQUEST_CODE)
+    }
+    /* Update multiple choice quiz screen with image and information*/
+    fun updateMCQuestionsImage(title:String, question: String, options: Array<String>, solution: String, imageName: String) {
+        // Call intent
+        val intent = Intent(this, ImageMCQuiz::class.java).apply{ putExtra("EXTRA_MC_TITLE", title)
+            putExtra("EXTRA_MC_QUESTION", question)
+            putExtra("EXTRA_MC_OPTIONS", options)
+            putExtra("EXTRA_MC_ANSWER", solution)
+            putExtra("EXTRA_MC_IMAGE", imageName)
+        }
+        startActivityForResult(intent, SETA_MC_REQUEST_CODE)
+    }
+    /* Update YouTube video screen*/
+    fun updateYouTubeScreen(title: String, embedCode: String) {
+        // Call intent
+        val intent = Intent(this, VideoPlayback::class.java).apply {
+            putExtra("EXTRA_YT_TITLE", title)
+            putExtra("EXTRA_YT_EMBED_CODE", embedCode)
+        }
+        startActivityForResult(intent, SETA_YT_REQUEST_CODE)
+    }
+    /* Displays the final screen of a module, passes score for trophy selection*/
+    fun displayFinishScreen(){
+        val intent = Intent(this, FinishScreen::class.java).apply {
+            putExtra("EXTRA_USER_SCORE", points)
+            putExtra("EXTRA_HIGHEST_POSSIBLE_SCORE", pointsPossible)
+        }
+        startActivityForResult(intent, SETA_FINISH_SCREEN_REQUEST_CODE)
     }
 }

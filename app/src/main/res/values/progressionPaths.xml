@@ -4,7 +4,9 @@
     In other words, we're specifying a table to look in and the row number in that table which holds the information we wish to provide
     At present, the options available are:
         - textInfo, pulling records from the text_modules table
+        - textImage, pulling records from the text_modules table *and* an image in res/drawable (image named text_image_"database ID", such as text_image_1 for entry 1)
         - quiz, pulling records from the quizzes table
+        - imageQuiz, pulling records from the quizzes table *and* an image in res/drawable (image named quiz_image_"database ID", such as quiz_image_1 for entry 1)
     -->
     <string name="NETWORKS_EASY">textInfo-1,textImage-1,imageQuiz-1,video-1,textInfo-2,textInfo-3,quiz-2,textInfo-4,quiz-1,textInfo-5,textInfo-6,textInfo-7,textInfo-8,quiz-3</string>
 </resources>

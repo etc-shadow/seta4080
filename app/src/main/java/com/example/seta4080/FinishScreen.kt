@@ -34,6 +34,7 @@ class FinishScreen : AppCompatActivity() {
         }
     }
 
+    /* Called to activate background dynamic gradient - it's a fun UI to keep eyes on the screen*/
     fun animateBackground(){
         val container = findViewById<ConstraintLayout>(R.id.mainLayout)
         val backgroundFlow = container.background as AnimationDrawable
@@ -42,6 +43,7 @@ class FinishScreen : AppCompatActivity() {
         backgroundFlow.start()
     }
 
+    /* Called by "next" button, returns information to activity caller and closes activity*/
     fun concludeModule(view: View) {
         val resultIntent = Intent(applicationContext, MainActivity::class.java).apply {
             setResult(Activity.RESULT_OK, this)
@@ -49,6 +51,7 @@ class FinishScreen : AppCompatActivity() {
         finish()
     }
 
+    /* Called to update trophies and messages*/
     fun setScore(level: Int){
         // Level 1 is gold, 2 is silver, 3 is bronze, 4 is "completion", 5 is no quiz expected
         val textbox = findViewById<TextView>(R.id.message_box)

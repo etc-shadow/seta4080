@@ -17,6 +17,7 @@ class VideoPlayback : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_playback)
+        animateBackground()
         val YT_VIDEO_TITLE = intent.getStringExtra("EXTRA_YT_TITLE")
         YT_VIDEO_ID = "https://youtube.com/embed/" + intent.getStringExtra("EXTRA_YT_EMBED_CODE")
         YT_PLAYER = findViewById<WebView>(R.id.videoCaller)
