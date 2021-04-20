@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
         val container = findViewById<ConstraintLayout>(R.id.mainLayout)
         val backgroundFlow = container.background as AnimationDrawable
         backgroundFlow.setEnterFadeDuration(2000)
-        backgroundFlow.setExitFadeDuration(4000)
+        backgroundFlow.setExitFadeDuration(2500)
         backgroundFlow.start()
     }
     /* Pull learning path (called after user selects a module) and update it as a session variable.
@@ -103,7 +103,9 @@ class MainActivity : AppCompatActivity() {
             "networks_path" -> {
                 concepts = getString(R.string.NETWORKS_EASY).split(",").toTypedArray()
             }
-
+            "social_engineering_path" -> {
+                concepts = getString(R.string.SOCIAL_ENGINEERING_EASY).split(",").toTypedArray()
+            }
         }
         checkMaxPointsPossible()
         displayScreen(activityIndex)

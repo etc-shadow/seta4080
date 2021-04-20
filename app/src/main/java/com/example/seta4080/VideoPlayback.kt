@@ -46,7 +46,7 @@ class VideoPlayback : AppCompatActivity() {
 
     /* Called to activate background dynamic gradient - it's a fun UI to keep eyes on the screen*/
     fun animateBackground(){
-        val container = findViewById<ConstraintLayout>(R.id.mainLayout)
+        val container = findViewById<ConstraintLayout>(R.id.activity_layout)
         val backgroundFlow = container.background as AnimationDrawable
         backgroundFlow.setEnterFadeDuration(2000)
         backgroundFlow.setExitFadeDuration(4000)
