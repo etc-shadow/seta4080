@@ -30,6 +30,11 @@ class MCQuiz : AppCompatActivity() {
         findViewById<RadioButton>(R.id.mc_option2).text = options?.get(1)
         findViewById<RadioButton>(R.id.mc_option3).text = options?.get(2)
         findViewById<RadioButton>(R.id.mc_option4).text = options?.get(3)
+        // Accessibility features for buttons
+        findViewById<RadioButton>(R.id.mc_option1).contentDescription = options?.get(0)
+        findViewById<RadioButton>(R.id.mc_option2).contentDescription = options?.get(1)
+        findViewById<RadioButton>(R.id.mc_option3).contentDescription = options?.get(2)
+        findViewById<RadioButton>(R.id.mc_option4).contentDescription = options?.get(3)
         // Pull answer from Intent
         solution = intent.getStringExtra("EXTRA_MC_ANSWER").toString()
     }

@@ -135,6 +135,7 @@
         android:layout_marginBottom="24dp"
         android:textColor="@color/white"
         android:text="Next"
+        android:contentDescription="Next"
         android:enabled="false"
         android:onClick="submitAnswer"
         app:layout_constraintBottom_toBottomOf="parent"
